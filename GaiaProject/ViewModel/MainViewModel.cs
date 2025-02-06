@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -77,8 +78,10 @@ namespace GaiaProject.ViewModel
         public ICommand CalculateCommand { get; set; }
         #endregion
 
+        private DatabaseService _databaseService;
         public MainViewModel()
         {
+            _databaseService = new DatabaseService();
             CalculateCommand = new RelayCommand(Calculate);
             History = new ObservableCollection<OperationModel>();
         }
@@ -95,15 +98,50 @@ namespace GaiaProject.ViewModel
                 default: Result = 0; break;
             }
 
-            History.Add(
-                new OperationModel
-                {
-                    ValueA = this.ValueA,
-                    ValueB = this.ValueB,
-                    Operation = this.Operation,
-                    Result = this.Result,
-                    Timestamp = DateTime.Now
-                });
+            var operationModel = new OperationModel
+            {
+                ValueA = this.ValueA,
+                ValueB = this.ValueB,
+                Operation = this.Operation,
+                Result = this.Result,
+                Timestamp = DateTime.Now
+            };
+
+            History.Add(operationModel);
+            CreateTxt();
+            _databaseService.SaveOperation(operationModel);
+        }
+
+        public void CreateTxt()
+        {
+            List<OperationModel> list = new List<OperationModel>();
+            string projectPath = Directory.GetCurrentDirectory(); // הנתיב הנוכחי של הפרויקט
+            string folderPath = Path.Combine(projectPath, "Data"); // הנתיב לתיקיית Data
+            string filePath = Path.Combine(folderPath, "results.txt"); // הנתיב המלא לקובץ
+
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath); // יצירת תיקיית Data אם לא קיימת
+            }
+
+            list = _databaseService.GetHistory();
+
+
+
+            // כתיבת התוצאה לקובץ (הוספה במקום דריסה)
+            foreach (var item in list)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                sb.AppendLine($"ValueA: {item.ValueA}");
+                sb.AppendLine($"Operation: {item.Operation}");
+                sb.AppendLine($"ValueB: {item.ValueB}");
+                sb.AppendLine($"Result: {item.Result}");
+                sb.AppendLine($"Timestamp: {item.Timestamp}");
+                sb.AppendLine("--------------------------------");
+
+                File.AppendAllText(filePath, sb.ToString());
+            }
         }
 
         #endregion
