@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace GaiaProject.ViewModel
@@ -17,8 +18,8 @@ namespace GaiaProject.ViewModel
         #region property
 
 
-        private double valueA;
-        public double ValueA
+        private string valueA;
+        public string ValueA
         {
             get { return valueA; }
             set
@@ -28,8 +29,8 @@ namespace GaiaProject.ViewModel
             }
         }
 
-        private double valueB;
-        public double ValueB
+        private string valueB;
+        public string ValueB
         {
             get { return valueB; }
             set
@@ -71,6 +72,40 @@ namespace GaiaProject.ViewModel
                 OnPropertyChanged();
             }
         }
+        private ObservableCollection<OperationModel> showListHstory;
+        public ObservableCollection<OperationModel> ShowListHstory
+        {
+            get { return showListHstory; }
+            set
+            {
+                showListHstory = value;
+                OnPropertyChanged();
+            }
+        }
+        private string error;
+        public string Error
+        {
+            get { return error; }
+            set
+            {
+                error = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Visibility valid;
+        public Visibility Valid
+        {
+            get { return valid; }
+            set
+            {
+                valid = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+
 
         #endregion
 
@@ -79,69 +114,77 @@ namespace GaiaProject.ViewModel
         #endregion
 
         private DatabaseService _databaseService;
+
         public MainViewModel()
         {
+            Valid = Visibility.Collapsed;
             _databaseService = new DatabaseService();
             CalculateCommand = new RelayCommand(Calculate);
             History = new ObservableCollection<OperationModel>();
+            ShowListHstory = new ObservableCollection<OperationModel>(_databaseService.GetHistory());
         }
 
         #region function
         private void Calculate()
         {
-            switch (Operation)
+            if (Algorithm.IsValidNumber(this.ValueA, this.ValueB))
             {
-                case "+": Result = ValueA + ValueB; break;
-                case "-": Result = ValueA - ValueB; break;
-                case "*": Result = ValueA * ValueB; break;
-                case "/": Result = ValueB != 0 ? ValueA / ValueB : 0; break;
-                default: Result = 0; break;
+                Valid = Visibility.Collapsed;
+                switch (Operation)
+                {
+                    case "+": Result = Convert.ToDouble(ValueA) + Convert.ToDouble(ValueB); break;
+                    case "-": Result = Convert.ToDouble(ValueA) - Convert.ToDouble(ValueB); break;
+                    case "*": Result = Convert.ToDouble(ValueA) * Convert.ToDouble(ValueB); break;
+                    case "/": Result = Convert.ToDouble(ValueB) != 0 ? Convert.ToDouble(ValueA) / Convert.ToDouble(ValueB) : 0; break;
+                    default: Result = 0; break;
+                }
+
+                var operationModel = new OperationModel
+                {
+                    ValueA = Convert.ToDouble(this.ValueA),
+                    ValueB = Convert.ToDouble(this.ValueB),
+                    Operation = this.Operation,
+                    Result = this.Result,
+                    Timestamp = DateTime.Now
+                };
+
+                History.Add(operationModel);
+                _databaseService.SaveOperation(operationModel);
+                CreateTxt();
             }
-
-            var operationModel = new OperationModel
+            else
             {
-                ValueA = this.ValueA,
-                ValueB = this.ValueB,
-                Operation = this.Operation,
-                Result = this.Result,
-                Timestamp = DateTime.Now
-            };
-
-            History.Add(operationModel);
-            CreateTxt();
-            _databaseService.SaveOperation(operationModel);
+                Valid = Visibility.Visible;
+                Error = "Invalid value";
+            }
         }
 
         public void CreateTxt()
         {
-            List<OperationModel> list = new List<OperationModel>();
             string projectPath = Directory.GetCurrentDirectory(); // הנתיב הנוכחי של הפרויקט
             string folderPath = Path.Combine(projectPath, "Data"); // הנתיב לתיקיית Data
             string filePath = Path.Combine(folderPath, "results.txt"); // הנתיב המלא לקובץ
 
+            // יצירת תיקיית Data אם לא קיימת
             if (!Directory.Exists(folderPath))
             {
-                Directory.CreateDirectory(folderPath); // יצירת תיקיית Data אם לא קיימת
+                Directory.CreateDirectory(folderPath);
             }
 
-            list = _databaseService.GetHistory();
+            // קבלת היסטוריית החישובים ושמירה ל-ObservableCollection
+            ShowListHstory = new ObservableCollection<OperationModel>(_databaseService.GetHistory());
 
+            // שימוש ב-StringBuilder אחד לאיסוף כל הנתונים
+            StringBuilder sb = new StringBuilder();
 
-
-            // כתיבת התוצאה לקובץ (הוספה במקום דריסה)
-            foreach (var item in list)
+            foreach (var item in ShowListHstory)
             {
-                StringBuilder sb = new StringBuilder();
-
-                sb.AppendLine($"ValueA: {item.ValueA}");
-                sb.AppendLine($"Operation: {item.Operation}");
-                sb.AppendLine($"ValueB: {item.ValueB}");
-                sb.AppendLine($"Result: {item.Result}");
-                sb.AppendLine($"Timestamp: {item.Timestamp}");
+                sb.AppendLine($"ValueA: {item.ValueA}, Operation: {item.Operation}, ValueB: {item.ValueB}, Result: {item.Result}, Timestamp: {item.Timestamp}");
                 sb.AppendLine("--------------------------------");
-
-                File.AppendAllText(filePath, sb.ToString());
             }
+
+            // כתיבה המידע בקובץ
+            File.WriteAllText(filePath, sb.ToString());
         }
 
         #endregion

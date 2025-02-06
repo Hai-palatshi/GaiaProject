@@ -40,13 +40,15 @@
 
             <!-- היסטוריית פעולות -->
             <ListBox Width="200" Height="100" Margin="5" 
-                     ItemsSource="{Binding History}">
+                     ItemsSource="{Binding ShowListHstory}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Operation}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+            <TextBlock Background="Red" FontSize="20" Margin="50,0,90,0" Text="{Binding Error}" Visibility="{Binding Valid}"/>
         </StackPanel>
+        
     </Grid>
 </Window>
