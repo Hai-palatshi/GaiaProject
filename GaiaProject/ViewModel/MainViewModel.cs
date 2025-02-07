@@ -144,7 +144,18 @@ namespace GaiaProject.ViewModel
                     case "+": Result = Convert.ToDouble(ValueA) + Convert.ToDouble(ValueB); break;
                     case "-": Result = Convert.ToDouble(ValueA) - Convert.ToDouble(ValueB); break;
                     case "*": Result = Convert.ToDouble(ValueA) * Convert.ToDouble(ValueB); break;
-                    case "/": Result = Convert.ToDouble(ValueB) != 0 ? Convert.ToDouble(ValueA) / Convert.ToDouble(ValueB) : 0; break;
+                    case "/":
+                        if (Convert.ToDouble(ValueB) != 0)
+                            Result = Convert.ToDouble(ValueA) / Convert.ToDouble(ValueB);
+                        else
+                        {
+                            Valid = Visibility.Visible;
+                            Error = "Invalid value";
+                            return; // או להציג הודעת שגיאה למשתמש
+                        }
+
+                        break;
+
                     default: Result = 0; break;
                 }
 

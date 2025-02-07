@@ -16,7 +16,7 @@ namespace GaiaProject.Model
             string pattern = @"^-?\d*\.?\d+$";
 
             // בדיקה אם שני המספרים חוקיים
-            return Regex.IsMatch(valueA, pattern) && Regex.IsMatch(valueB, pattern);
+            return Regex.IsMatch(valueA, pattern) && Regex.IsMatch(valueB, pattern) ;
         }
 
         public static Dictionary<string, int> DetailOperation(ObservableCollection<OperationModel> operations)
