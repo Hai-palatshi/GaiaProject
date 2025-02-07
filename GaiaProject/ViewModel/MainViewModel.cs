@@ -17,7 +17,6 @@ namespace GaiaProject.ViewModel
     {
         #region property
 
-
         private string valueA;
         public string ValueA
         {
@@ -104,8 +103,16 @@ namespace GaiaProject.ViewModel
             }
         }
 
-
-
+        private Dictionary<string, int> allOperation;
+        public Dictionary<string, int> AllOperation
+        {
+            get { return allOperation; }
+            set
+            {
+                allOperation = value;
+                OnPropertyChanged();
+            }
+        }
 
         #endregion
 
@@ -122,6 +129,8 @@ namespace GaiaProject.ViewModel
             CalculateCommand = new RelayCommand(Calculate);
             History = new ObservableCollection<OperationModel>();
             ShowListHstory = new ObservableCollection<OperationModel>(_databaseService.GetHistory());
+            AllOperation = Algorithm.DetailOperation(ShowListHstory);
+
         }
 
         #region function
@@ -173,7 +182,7 @@ namespace GaiaProject.ViewModel
 
             // קבלת היסטוריית החישובים ושמירה ל-ObservableCollection
             ShowListHstory = new ObservableCollection<OperationModel>(_databaseService.GetHistory());
-
+            AllOperation = Algorithm.DetailOperation(showListHstory);
             // שימוש ב-StringBuilder אחד לאיסוף כל הנתונים
             StringBuilder sb = new StringBuilder();
 
