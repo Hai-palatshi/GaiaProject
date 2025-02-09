@@ -12,10 +12,10 @@ namespace GaiaProject.Model
     {
         public static bool IsValidNumber(string valueA, string valueB)
         {
-            // תבנית לבדיקת מספרים שלמים ועשרוניים 
+            // Template for validating integers and decimal numbers. 
             string pattern = @"^-?\d*\.?\d+$";
 
-            // בדיקה אם שני המספרים חוקיים
+            // Checking if both numbers are valid.
             return Regex.IsMatch(valueA, pattern) && Regex.IsMatch(valueB, pattern) ;
         }
 

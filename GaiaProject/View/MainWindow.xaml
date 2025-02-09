@@ -11,15 +11,15 @@
 
     <Grid Margin="10">
         <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center">
-            <!-- שדה A -->
+            <!-- Field A -->
             <TextBox Width="200" Margin="5" 
                      Text="{Binding ValueA, UpdateSourceTrigger=PropertyChanged}" />
 
-            <!-- שדה B -->
+            <!-- Field  B -->
             <TextBox Width="200" Margin="5" 
                      Text="{Binding ValueB, UpdateSourceTrigger=PropertyChanged}" />
 
-            <!-- ComboBox לבחירת פעולה -->
+            <!-- ComboBox for selecting an action. -->
             <ComboBox Width="200" Margin="5"
           SelectedValue="{Binding Operation}" 
           SelectedValuePath="Content">
@@ -30,17 +30,17 @@
             </ComboBox>
 
 
-            <!-- כפתור חישוב -->
+            <!-- Calculate Button -->
             <Button Width="200" Margin="5" Content="חשב" 
                     Command="{Binding CalculateCommand}" />
 
-            <!-- תוצאת החישוב -->
+            <!-- Calculation Result -->
             <TextBlock Width="200" Margin="5" FontWeight="Bold" FontSize="18" 
                        Text="{Binding Result}" TextAlignment="Center" />
 
             <StackPanel Orientation="Horizontal">
 
-                <!-- היסטוריית פעולות -->
+                <!-- Action History -->
                 <ListBox Width="100" Height="100" Margin="5"  HorizontalAlignment="Left"
                      ItemsSource="{Binding ShowListHstory}">
                     <ListBox.ItemTemplate>
@@ -55,13 +55,13 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="5">
-                                <!-- הצגת המפתח (Key) -->
+                                <!-- dictinary Key -->
                                 <TextBlock Text="{Binding Key}" FontWeight="Bold" Margin="5,0" />
 
-                                <!-- רווח בין המפתח לערך -->
+                                <!-- Space between the key and the value. -->
                                 <TextBlock Text=": " />
 
-                                <!-- הצגת הערך (Value) -->
+                                <!-- Display Value -->
                                 <TextBlock Text="{Binding Value}" Foreground="Blue" Margin="5,0" />
                             </StackPanel>
                         </DataTemplate>

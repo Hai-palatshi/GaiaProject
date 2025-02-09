@@ -151,7 +151,7 @@ namespace GaiaProject.ViewModel
                         {
                             Valid = Visibility.Visible;
                             Error = "Invalid value";
-                            return; // או להציג הודעת שגיאה למשתמש
+                            return; //  display an error message to the client.
                         }
 
                         break;
@@ -181,20 +181,20 @@ namespace GaiaProject.ViewModel
 
         public void CreateTxt()
         {
-            string projectPath = Directory.GetCurrentDirectory(); // הנתיב הנוכחי של הפרויקט
-            string folderPath = Path.Combine(projectPath, "Data"); // הנתיב לתיקיית Data
-            string filePath = Path.Combine(folderPath, "results.txt"); // הנתיב המלא לקובץ
+            string projectPath = Directory.GetCurrentDirectory(); // The current project path.
+            string folderPath = Path.Combine(projectPath, "Data"); // The path to the Data folder.
+            string filePath = Path.Combine(folderPath, "results.txt"); // The full path to the file.
 
-            // יצירת תיקיית Data אם לא קיימת
+            // Creating the Data folder if it does not exist.
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
             }
 
-            // קבלת היסטוריית החישובים ושמירה ל-ObservableCollection
+            // Retrieving the calculation history and saving it to an ObservableCollection.
             ShowListHstory = new ObservableCollection<OperationModel>(_databaseService.GetHistory());
             AllOperation = Algorithm.DetailOperation(showListHstory);
-            // שימוש ב-StringBuilder אחד לאיסוף כל הנתונים
+            // Using a single StringBuilder to collect all the data.
             StringBuilder sb = new StringBuilder();
 
             foreach (var item in ShowListHstory)
@@ -203,7 +203,7 @@ namespace GaiaProject.ViewModel
                 sb.AppendLine("--------------------------------");
             }
 
-            // כתיבה המידע בקובץ
+            // Writing the data to a file.
             File.WriteAllText(filePath, sb.ToString());
         }
 
