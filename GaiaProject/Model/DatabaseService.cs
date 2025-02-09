@@ -21,8 +21,8 @@ namespace GaiaProject.Model
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                string query = "INSERT INTO OperationHistory (ValueA, ValueB, Operation, Result, Timestamp)" +
-                               "VALUES (@ValueA, @ValueB, @Operation, @Result, @Timestamp)";
+                string query = @"INSERT INTO OperationHistory (ValueA, ValueB, Operation, Result, Timestamp) 
+                               VALUES (@ValueA, @ValueB, @Operation, @Result, @Timestamp)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ValueA", operation.ValueA);
